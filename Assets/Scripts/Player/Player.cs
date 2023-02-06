@@ -27,11 +27,23 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Player Manager Variables
+    public static Player Instance;
     public float fireRate;
     public float playerDamage;
     [SerializeField] private float fireRateCounter;
     #endregion
 
+    private void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -106,5 +118,15 @@ public class Player : MonoBehaviour
         projectile.SetDamage(playerDamage);
 
         fireRateCounter = 0;
+    }
+
+    public void SetDamage(float _damage)
+    {
+        playerDamage = _damage;
+    }
+
+    public void SetFireRate(float _fireRate)
+    {
+        fireRate = _fireRate;
     }
 }

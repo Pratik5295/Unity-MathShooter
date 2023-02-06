@@ -8,6 +8,8 @@ public class Obstacle : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float cost;
 
+    [SerializeField] private float health;
+
     public Action OnDestroyEvent;
 
     private void Start()
@@ -33,8 +35,26 @@ public class Obstacle : MonoBehaviour
         }
         else if(collision.gameObject.tag == "Projectile")
         {
+            Projectile attacker = collision.gameObject.GetComponent<Projectile>();
+            if (attacker != null)
+            {
+                DamageDealt(attacker.damage);
+            }
+        }
+    }
+
+    private void DamageDealt(float damage)
+    {
+        health -= damage;
+        if(health <= 0)
+        {
             OnDestroyEvent?.Invoke();
         }
+    }
+
+    public void SetHealth(float amount)
+    {
+        health = amount;
     }
 
     private void OnDestroyEventHandler()
