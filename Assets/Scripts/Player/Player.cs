@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -31,6 +32,10 @@ public class Player : MonoBehaviour
     public float fireRate;
     public float playerDamage;
     [SerializeField] private float fireRateCounter;
+
+    //Events for fireRate and playerDamage Update
+    public Action fireRateUpdateEvent;
+    public Action playerDamageUpdateEvent;
     #endregion
 
     private void Awake()
