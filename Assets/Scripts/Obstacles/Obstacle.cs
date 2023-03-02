@@ -1,20 +1,23 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using Random = UnityEngine.Random;
 
 public class Obstacle : MonoBehaviour
 {
     [SerializeField] private float speed;
-    [SerializeField] private float cost;
+    [SerializeField] private float cost;    //The health with which the object was created
 
-    [SerializeField] private float health;
+    [SerializeField] private float health; 
+
+    [SerializeField] private TMP_Text healthText;
 
     public Action OnDestroyEvent;
 
     private void Start()
     {
         OnDestroyEvent += OnDestroyEventHandler;
+        UpdateHealthText();
     }
 
     private void OnDisable()
@@ -23,7 +26,7 @@ public class Obstacle : MonoBehaviour
     }
     private void Update()
     {
-        transform.Translate(Vector3.forward * Time.deltaTime * speed);
+        transform.Translate(-Vector3.forward * Time.deltaTime * speed);
 
     }
 
@@ -41,20 +44,36 @@ public class Obstacle : MonoBehaviour
                 DamageDealt(attacker.damage);
             }
         }
+        else if(collision.gameObject.tag == "Destroyer")
+        {
+            Debug.Log("Collided with destroyer!!");
+            GameManager.instance.OnObstacleHitDestroyer(cost);
+            Destroy(this.gameObject);
+        }
     }
 
     private void DamageDealt(float damage)
     {
         health -= damage;
-        if(health <= 0)
+        UpdateHealthText();
+        if (health <= 0)
         {
             OnDestroyEvent?.Invoke();
         }
     }
 
-    public void SetHealth(float amount)
+    public void SetHealth(float amount, float playerDamage,float diffcultyQuotient)
     {
-        health = amount;
+        float index = Random.Range(-playerDamage, playerDamage);
+        health = diffcultyQuotient * (amount + index);
+        health = Mathf.Round(health);
+
+        if (health <= 1)
+        {
+            health = amount;
+        }
+
+        cost = health;
     }
 
     private void OnDestroyEventHandler()
@@ -62,4 +81,14 @@ public class Obstacle : MonoBehaviour
         ScoreManager.Instance.AddToScore(cost);
         Destroy(this.gameObject);
     }
+
+
+
+    #region UI Functions
+
+    private void UpdateHealthText()
+    {
+        healthText.text = health.ToString();
+    }
+    #endregion
 }

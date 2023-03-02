@@ -22,9 +22,27 @@ public class ScoreManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
+    public float GetScore()
+    {
+        return score;
+    }
+
     public void AddToScore(float amount)
     {
         score += amount;
         OnScoreUpdateEvent?.Invoke();
+    }
+
+    public void ReduceFromScore(float amount)
+    {
+        score -= amount;
+
+        if(score < 0)
+        {
+            //As for score = 0, we give player a chance to rebuild
+            GameManager.instance.GameOverState();
+        }
+        //TODO: Change this to a new event/action to add shake animation on score value reduction
+        OnScoreUpdateEvent?.Invoke();   
     }
 }

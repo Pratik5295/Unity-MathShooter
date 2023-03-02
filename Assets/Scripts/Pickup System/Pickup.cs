@@ -16,6 +16,10 @@ public class Pickup : MonoBehaviour
         {
             OnPlayerTriggered();
         }
+        else if (other.gameObject.tag == "Destroyer")
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     protected virtual void OnPlayerTriggered()

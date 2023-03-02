@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4523725468437567355}
   - component: {fileID: 4523725468437567354}
   - component: {fileID: 4523725468437567353}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Projectile
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -130,4 +130,4 @@ MonoBehaviour:
   damage: 1
   timeLimit: 10
   timeCounter: 0
-  speed: 3
+  speed: 8

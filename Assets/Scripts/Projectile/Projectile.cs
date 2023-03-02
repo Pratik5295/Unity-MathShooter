@@ -33,7 +33,7 @@ public class Projectile : MonoBehaviour
 
         else
         {
-            Vector3 offset = Vector3.forward * Time.deltaTime * speed;
+            Vector3 offset = Vector3.forward.normalized * Time.deltaTime * speed;
             rb.MovePosition(transform.position + offset);
             timeCounter += Time.deltaTime;
         }
@@ -42,5 +42,10 @@ public class Projectile : MonoBehaviour
     public void SetDamage(float _dmg)
     {
         damage = _dmg;
+    }
+
+    public void SetSpeed(float _speed)
+    {
+        speed = _speed;
     }
 }

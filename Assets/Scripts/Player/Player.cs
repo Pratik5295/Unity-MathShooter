@@ -25,6 +25,10 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject shootPoint;
 
+    [SerializeField] private float projectileSpeed; //Only for testing purposes: To be determined from code, otherwise prefabs will handle it
+
+    //Temporary health variable, TODO: Work on it later to improve system
+    [SerializeField] private float health;
     #endregion
 
     #region Player Manager Variables
@@ -122,16 +126,27 @@ public class Player : MonoBehaviour
         Projectile projectile = Instantiate(projectilePrefab, shootPoint.transform.position, Quaternion.identity);
         projectile.SetDamage(playerDamage);
 
+        projectile.SetSpeed(projectileSpeed);
+
         fireRateCounter = 0;
     }
 
-    public void SetDamage(float _damage)
+    public void SetDamage(float amount)
     {
-        playerDamage = _damage;
+        playerDamage += amount;
+
+        playerDamageUpdateEvent?.Invoke();
     }
 
     public void SetFireRate(float _fireRate)
     {
-        fireRate = _fireRate;
+        fireRate -= _fireRate;
+
+        if (fireRate <= 0.2f)
+        {
+            Debug.Log("Reached maxed rate");
+            fireRate = 0.1f;
+            fireRateUpdateEvent?.Invoke();
+        }
     }
 }
