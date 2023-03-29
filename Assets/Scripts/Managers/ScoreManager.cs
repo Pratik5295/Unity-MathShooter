@@ -27,6 +27,20 @@ public class ScoreManager : MonoBehaviour
         return score;
     }
 
+    public void ResetScore()
+    {
+        score = 0;
+
+        if(Player.Instance != null)
+        {
+            Player.Instance.ResetGameValues();
+        }
+        else
+        {
+            Debug.Log("No Player available");
+        }
+    }
+
     public void AddToScore(float amount)
     {
         score += amount;

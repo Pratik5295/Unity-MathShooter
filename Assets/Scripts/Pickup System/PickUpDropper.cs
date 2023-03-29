@@ -32,7 +32,13 @@ public class PickUpDropper : MonoBehaviour
         Debug.Log("Trigger drop rate of the obstacle");
 
         //For now dropping at every object destroy
+        int index = (int)Random.Range(0, 100);
+
+        //Currently 50% chance of a pick up item drop
+
+        if(index <= 50) return;
 
         PickUpSystem.instance.CreateDrops(transform.position);
+      
     }
 }

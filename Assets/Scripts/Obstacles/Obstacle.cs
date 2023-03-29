@@ -35,6 +35,8 @@ public class Obstacle : MonoBehaviour
         if(collision.gameObject.tag == "Player")
         {
             Debug.Log("Player hit me");
+            GameManager.instance.OnObstacleHitDestroyer(health);
+            Destroy(this.gameObject);
         }
         else if(collision.gameObject.tag == "Projectile")
         {
@@ -47,7 +49,7 @@ public class Obstacle : MonoBehaviour
         else if(collision.gameObject.tag == "Destroyer")
         {
             Debug.Log("Collided with destroyer!!");
-            GameManager.instance.OnObstacleHitDestroyer(cost);
+            GameManager.instance.OnObstacleHitDestroyer(health);
             Destroy(this.gameObject);
         }
     }

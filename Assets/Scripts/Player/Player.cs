@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
+[DefaultExecutionOrder(-2)]
 public class Player : MonoBehaviour
 {
     ///<summary>
@@ -14,10 +16,15 @@ public class Player : MonoBehaviour
     /// 
 
     #region Player Variables
+    private Vector3 middlePosition;
     [SerializeField] private Transform leftPosition;
     [SerializeField] private Transform rightPosition;
 
     [SerializeField] private float speed;
+
+    [SerializeField] private float jumpForce;
+
+    [SerializeField] private bool onGround;
 
     [SerializeField] private Rigidbody rb;
 
@@ -37,9 +44,27 @@ public class Player : MonoBehaviour
     public float playerDamage;
     [SerializeField] private float fireRateCounter;
 
+    //For Restart Values
+    private float defaultFireRate;
+    private float defaultPlayerDamage;
+    private float defaultFireRateCounter;
+
+
     //Events for fireRate and playerDamage Update
     public Action fireRateUpdateEvent;
     public Action playerDamageUpdateEvent;
+    #endregion
+
+    #region Player Movement
+    public enum POSITION 
+    { 
+        MIDDLE = 0,
+        LEFT = 1,
+        RIGHT = 2
+    }
+
+    [SerializeField] private POSITION Place;
+
     #endregion
 
     private void Awake()
@@ -47,6 +72,9 @@ public class Player : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
+            defaultFireRate = fireRate;
+            defaultPlayerDamage = playerDamage;
+            defaultFireRateCounter = fireRateCounter;
         }
         else
         {
@@ -56,6 +84,11 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        middlePosition = transform.position;
+        Place = POSITION.MIDDLE;
+
+        
     }
 
     private void Update()
@@ -71,6 +104,41 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         RigidBodyMovement();
+    }
+    public void PlayerMove(bool goLeft) //Consider swipe left as a bool, for swipe right it would be false
+    {
+        switch (Place)
+        {
+            case POSITION.MIDDLE:
+                if (goLeft)
+                {
+                    //transform.position = leftPosition.position;
+                    Place = POSITION.LEFT;
+                    transform.position = Vector3.MoveTowards(transform.position, leftPosition.position, speed);
+                }
+                else
+                {
+                    transform.position = rightPosition.position;
+                    Place = POSITION.RIGHT;
+                }
+                break;
+
+            case POSITION.LEFT:
+                if (!goLeft)
+                { 
+                        transform.position = middlePosition;
+                        Place = POSITION.MIDDLE;
+                }
+                break;
+
+            case POSITION.RIGHT:
+                if(goLeft)
+                {
+                    transform.position = middlePosition;
+                    Place = POSITION.MIDDLE;
+                }
+                break;
+        }
     }
 
     private void RigidBodyMovement()
@@ -113,6 +181,25 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Shoot()
+    {
+        //This is from mobile
+        if (fireRateCounter >= fireRate)
+        {
+            ShootProjectile();
+        }
+    }
+
+    public void SetGroundFlag(bool flag)
+    {
+        onGround = flag;
+    }
+    public void Jump()
+    {
+        if (!onGround) return;
+        rb.AddForce(Vector3.up * jumpForce);
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.tag == "Enemy")
@@ -148,5 +235,13 @@ public class Player : MonoBehaviour
             fireRate = 0.1f;
             fireRateUpdateEvent?.Invoke();
         }
+    }
+
+    public void ResetGameValues()
+    {
+        fireRate = defaultFireRate;
+        playerDamage = defaultPlayerDamage;
+        fireRateCounter = defaultFireRateCounter;
+        Time.timeScale = 1;
     }
 }
